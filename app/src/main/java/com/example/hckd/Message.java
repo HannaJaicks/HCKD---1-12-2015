@@ -3,11 +3,18 @@ package com.example.hckd;
 import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.Html;
+import android.text.method.ScrollingMovementMethod;
 import android.util.JsonReader;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ScrollView;
 import android.widget.TextView;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -29,7 +36,9 @@ public class Message extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_message);
         TextView factLabel = (TextView) findViewById(R.id.textarea);
-
+      //  factLabel.setMovementMethod(ScrollingMovementMethod.getInstance());
+       //ScrollView sv=(ScrollView) findViewById(R.id.scrollview);
+        //sv.scrollTo(0,  0);
         String email=getIntent().getStringExtra("Email");
         new RetrieveFeedTask(factLabel).execute(email);
         //factLabel.setText("test");
@@ -62,24 +71,40 @@ public class Message extends Activity {
 
 }
 
-class RetrieveFeedTask extends AsyncTask<String, Void, String> {
+/*
+class RetrieveFeedTask extends AsyncTask<String, Void, Wrapper> {
     TextView fact;
+
+    String name;
+   String desp;
+    String a;
+
+    int i;
+    int j;
 
     public RetrieveFeedTask(TextView factLabel) {
         this.fact = factLabel;
     }
 
+    //int id_count=0;
+
     @Override
-    protected String doInBackground(String... email) {
+    protected Wrapper doInBackground(String... email) {
         StringBuilder sb = new StringBuilder();
+        StringBuilder namesb = new StringBuilder();
+      // StringBuilder despsb=new StringBuilder();
+
+        Wrapper w = new Wrapper();
         if (email != null) {
             try {
 
                 String str1 = "https://www.haveibeenpwned.com/api/v2/breachedaccount/" + email[0];
-                /*HttpUriRequest request = new HttpGet(str1);
+                */
+/*HttpUriRequest request = new HttpGet(str1);
                 HttpClient httpclient = new DefaultHttpClient();
                 HttpResponse response = httpclient.execute(request);
-                String resp = EntityUtils.toString(response.getEntity());*/
+                String resp = EntityUtils.toString(response.getEntity());*//*
+
                 URL url = new URL(str1);
                 SSLContext context = SSLContext.getInstance("Default");
 
@@ -102,38 +127,114 @@ class RetrieveFeedTask extends AsyncTask<String, Void, String> {
                     }
                 }
 
-                Log.d("response",sb.toString());
-               /* try {
+                Log.d("response", sb.toString());
+
+                String resp = sb.toString();
+
+                JSONArray marray = new JSONArray(resp);
+
+                if (resp != null) {
+                    for (int i = 0; i < marray.length(); i++) {
+
+
+                        try {
+
+
+                            JSONObject jObj = marray.getJSONObject(i);
+                            name = jObj.getString("Name");
+                            desp = jObj.getString("Description");
+
+                            //    Log.d("Id_count", Integer.toString(id_count));
+                           // namesb.append(name + "\n" + desp + "\n\n");
+                            namesb.append(name + "<br>" + desp + "<br><br>");
+                         //   namesb.append(name + "\n");
+                           // despsb.append(desp + "\n");
+                            Log.d("Name", name);
+                           //String a=namesb.toString();
+                          //  String b=despsb.toString();
+                            //  Log.d("Description", desp);
+                           // despsb.append(desp + "\n");
+                            Log.d("i", Integer.toString(i));
+                            j = i;
+
+
+
+                            w.j = j + 1;
+                            w.data = namesb;
+
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
+
+                        }
+                    }
+                    //  id_count++;
+                }
+
+
+
+
+               */
+/* try {
                     fact.setText(sb.toString());
                 }
                 catch (Exception e) {
                 }
-*/
+*//*
+
                 //List messages = new ArrayList();
                 //messages=readJsonStream(in);
 
+            } catch (JSONException e) {
+                e.printStackTrace();
             } catch (FileNotFoundException e) {
-                Log.d("Your are safe", "No Breach");
+                Log.d("Your are safe!", "No Breach :) :)");
             } catch (Exception e) {
                 e.printStackTrace();
             }
 
         }
-        return sb.toString();
+
+        //    for(int k=0;k>i;i--) {
+
+
+        // Log.d("Name", name);
+
+        //   w.id_count=id_count;
+
+        //}
+        return w;
+        // return name;
     }
 
-    protected void onPostExecute(String result) {
+    protected void onPostExecute(Wrapper w) {
         // TODO: check this.exception
         // TODO: do something with the feed
-        if (result==""){
-            fact.setText("You are safe");
+
+        if (w.data != null) {
+   //  for (int j = 0; j <= i ; j++) {
+         // try {
+
+            fact.setText("Oh no! - HCKD " + "\n" + "Hacked on " + w.j +  " site" + "\n\n" + Html.fromHtml(w.data.toString()));
+
+
+            //  }
+            //catch(Exception e){}
+
+     //      }
+
         }
         else {
-            fact.setText(result);
+
+            fact.setText("You are safe! No Breach :) :)");
         }
     }
 
-    public List readJsonStream(InputStream in) throws IOException {
+}
+
+*/
+
+  /*  public List readJsonStream(InputStream in) throws IOException {
 
         JsonReader reader = new JsonReader(new InputStreamReader(in, "UTF-8"));
         try {
@@ -165,10 +266,10 @@ class RetrieveFeedTask extends AsyncTask<String, Void, String> {
             String name = reader.nextName();
             if (name.equals("Name")) {
                 text = reader.nextString();
-               try {
-                  // fact.setText(text);
-               }
-               catch(Exception e)
+                try {
+                    // fact.setText(text);
+                }
+                catch(Exception e)
                 {}
                 Log.d("Name", text);
             }
@@ -186,7 +287,8 @@ class RetrieveFeedTask extends AsyncTask<String, Void, String> {
         reader.endObject();
         return new android.os.Message();
     }
-}
+
+*/
 
 
 
